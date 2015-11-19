@@ -36,12 +36,12 @@ for root, dirnames, filenames in os.walk(base_path):
             continue
 
         args = conv_bin + conv_input + conv_options + [conv_output]
-        conv = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        conv = subprocess.call(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        if not conv.returncode:
+        if conv != 0:
             failed +=1
-            print(conv.args)
-            print(conv.stderr.read())
+            print('Failed conversion with parameters: ')
+            print(args)
         else:
             succeeded +=1
 
