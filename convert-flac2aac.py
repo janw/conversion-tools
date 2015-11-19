@@ -6,7 +6,7 @@ import os
 import json
 
 base_path   = '/Volumes/Musik/'
-out_path    = '/Volumes/Data HD/iTunes Media/Automatically Add to iTunes.localized/'
+out_path    = '/Volumes/SD Card/iTunes Music/'
 ft_input    = '.flac'
 ft_output   = '.m4a'
 
