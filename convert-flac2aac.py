@@ -92,11 +92,6 @@ def main():
                 except FileNotFoundError:
                     pass
 
-            if succeeded > 2:
-                    break
-        if succeeded > 2:
-            break
-
     print('Converted {} files, {} failed.'.format(succeeded, failed))
 
     if len(addable_list) > 0 and len(postscript) > 0:
