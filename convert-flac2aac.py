@@ -9,6 +9,16 @@ base_path   = '/Volumes/Musik/'
 out_path    = '/Volumes/SD Card/iTunes Music/'
 ft_input    = '.flac'
 ft_output   = '.m4a'
+postscript  = """
+                on run {argv}
+                    repeat with i from 1 to number of items in argv
+                        tell application "iTunes"
+                            launch
+                            add (item i of argv as POSIX file)
+                        end tell
+                    end repeat
+                end run
+              """
 
 conv_bin = '/usr/local/bin/ffmpeg -loglevel error'.split(' ')
 impl_bin = 'atomicparsley'
@@ -19,6 +29,7 @@ conv_output = ''
 
 def main():
     files = []
+    addable_list = []
     succeeded   = 0
     failed      = 0
     global conv_output
@@ -70,12 +81,29 @@ def main():
 
             if conv == 0:
                 succeeded +=1
+                addable_list.append(conv_output)
             else:
                 failed +=1
                 print('Failed conversion with parameters:')
                 print(' '.join([arg.replace(' ', '\ ') for arg in args_conv]))
 
+                try:
+                    os.remove(conv_output)
+                except FileNotFoundError:
+                    pass
+
+            if succeeded > 2:
+                    break
+        if succeeded > 2:
+            break
+
     print('Converted {} files, {} failed.'.format(succeeded, failed))
+
+    if len(addable_list) > 0 and len(postscript) > 0:
+
+        import applescript
+        scpt = applescript.AppleScript(postscript)
+        print(scpt.run(addable_list))
 
 if __name__ == "__main__":
 
