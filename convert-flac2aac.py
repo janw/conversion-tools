@@ -13,7 +13,7 @@ ft_output   = '.m4a'
 conv_bin = '/usr/local/bin/ffmpeg -loglevel error'.split(' ')
 impl_bin = 'atomicparsley'
 conv_options = '-y -c:a libfaac -q:a 500 cover.jpg'.split(' ')
-conv_options_retry = '-y -c:a libfaac -q:a 500'.split(' ')
+conv_options_retry = '-y -vn -c:a libfaac -q:a 500'.split(' ')
 impl_options = '--artwork cover.jpg --overWrite'.split(' ')
 conv_output = ''
 
