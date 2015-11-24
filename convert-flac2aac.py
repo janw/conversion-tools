@@ -4,6 +4,7 @@ import subprocess
 import fnmatch
 import os
 import json
+import datetime
 
 base_path   = '/Volumes/Musik/'
 out_path    = '/Volumes/SD Card/iTunes Music/'
@@ -22,7 +23,7 @@ postscript  = """
 
 conv_bin = '/usr/local/bin/ffmpeg -loglevel error'.split(' ')
 impl_bin = 'atomicparsley'
-conv_options = '-y -c:a libfaac -q:a 500 cover.jpg'.split(' ')
+conv_options = '-y -vn -c:a libfaac -q:a 500'.split(' ')
 conv_options_retry = '-y -vn -c:a libfaac -q:a 500'.split(' ')
 impl_options = '--artwork cover.jpg --overWrite'.split(' ')
 conv_output = ''
@@ -36,6 +37,7 @@ def main():
 
     for root, dirnames, filenames in os.walk(base_path):
         for filename in fnmatch.filter(filenames, '*' +ft_input):
+            timer_start = datetime.datetime.now()
             cur_outfile = os.path.splitext(filename)[0]+ft_output
             conv_input = ['-i', os.path.join(root, filename)]
 
@@ -56,7 +58,7 @@ def main():
             print(conv_input)
 
             # Compile all command line options
-            args_conv = conv_bin + conv_input + conv_options + [conv_output]
+            args_conv = conv_bin + conv_input + conv_options + [conv_output, 'cover.jpg']
             args_impl = [impl_bin, conv_output] + impl_options
 
             # Run conversion and implantation of the cover art
@@ -82,6 +84,8 @@ def main():
             if conv == 0:
                 succeeded +=1
                 addable_list.append(conv_output)
+                timer_diff = datetime.datetime.now()-timer_start
+                print('Done in {:9.2f} seconds'.format(timer_diff.total_seconds()))
             else:
                 failed +=1
                 print('Failed conversion with parameters:')
@@ -101,7 +105,7 @@ def main():
         print(scpt.run(addable_list))
 
 if __name__ == "__main__":
-
+    timer_start_total = datetime.datetime.now()
     try:
         main()
     except KeyboardInterrupt:
@@ -112,3 +116,6 @@ if __name__ == "__main__":
         except FileNotFoundError:
             pass
         print("\nQuit early.")
+
+    timer_diff_total = datetime.datetime.now()-timer_start_total
+    print('All done in {:.2f} seconds.'.format(timer_diff_total.total_seconds()))
